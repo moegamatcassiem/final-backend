@@ -4,7 +4,6 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 import cloudinary
 import cloudinary.uploader
-from datetime import timedelta
 
 # user table
 class User(object):
@@ -135,16 +134,15 @@ def user_registration():
             response["message"] = 'Success'
             response["status_code"] = 201
 
-        msg = Message('Hello Message', sender='isaacscassiem2003@gmail.com', recipients=email)
+        msg = Message('Hello Message', sender='isaacscassiem2003@gmail.com', recipients=[email])
         msg.body = "My email using Flask"
         mail.send(msg)
-        return "Message sent"
-
+        print("message sent!")
     return response
 
 
 # gets users
-@app.route('/get-users/', methods=['GETS'])
+@app.route('/get-users/', methods=['GET'])
 def get_users():
     response = {}
     with sqlite3.connect('e-store.db') as conn:
@@ -170,7 +168,8 @@ def products_create():
 
         with sqlite3.connect('e-store.db') as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO products (product_name, product_description, product_quantity, product_price, product_image)"
+            cursor.execute("INSERT INTO products (product_name, product_description, product_quantity, product_price, "
+                           "product_image)"
                            "VALUES(?, ?, ?, ?, ?)",
                            (product_name, product_description, product_quantity, product_price, product_image))
             conn.commit()
@@ -228,13 +227,13 @@ def edit_product(id):
             product_description = request.form['product_description']
             product_quantity = request.form['product_quantity']
             product_price = request.form['product_price']
-            product_image = request.form['product_image']
+            product_image = image_url()
             put_data = {}
 
             if product_name is not None:
                 put_data["product_name"] = product_name
                 cursor = conn.cursor()
-                cursor.execute("UPDATE product SET product_name =? WHERE id =?", (put_data['product_name'], id))
+                cursor.execute("UPDATE products SET product_name =? WHERE id =?", (put_data['product_name'], id))
                 conn.commit()
                 response['message'] = "Update was successful"
                 response["status_code"] = 201
@@ -242,7 +241,7 @@ def edit_product(id):
             if product_description is not None:
                 put_data["product_description"] = product_description
                 cursor = conn.cursor()
-                cursor.execute("UPDATE product SET product_description =? WHERE id =?", (put_data['product_description'], id))
+                cursor.execute("UPDATE products SET product_description =? WHERE id =?", (put_data['product_description'], id))
                 conn.commit()
                 response['message'] = "Update was successful"
                 response["status_code"] = 201

@@ -94,7 +94,7 @@ def image_url():
 
     upload_result = None
     if request.method == 'POST' or request.method == 'PUT':
-        product_image = request.files['product_image']
+        product_image = request.json['product_image']
         app.logger.info('%s file_to_upload', product_image)
         if product_image:
             upload_result = cloudinary.uploader.upload(product_image)
@@ -123,10 +123,10 @@ def user_registration():
     }
     if request.method == "POST":
         with sqlite3.connect("e-store.db") as conn:
-            firstname = request.form['firstname']
-            surname = request.form['surname']
-            email = request.form['email']
-            password = request.form['password']
+            firstname = request.json['firstname']
+            surname = request.json['surname']
+            email = request.json['email']
+            password = request.json['password']
             cursor = conn.cursor()
             cursor.execute("INSERT INTO users (firstname, surname, email, password) VALUES(?, ?, ?, ?)",
                            (firstname, surname, email, password))
@@ -154,16 +154,87 @@ def get_users():
     response['data'] = account
     return response
 
+# shows one user
+@app.route('/get-user/<int:id>', methods=['GET'])
+def get_user(id):
+    response = {}
+    with sqlite3.connect('e-store.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id=" + str(id))
+        carts = cursor.fetchall()
+
+    response['status_code'] = 201
+    response['data'] = carts
+    return response
+
+# delete users
+@app.route("/delete-users/<int:id>", )
+def delete_user(id):
+    response = {}
+    with sqlite3.connect("e-store.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id=" + str(id))
+        conn.commit()
+        response['status_code'] = 201
+        response['message'] = "user deleted successfully"
+    return response
+
+# route to edit users
+@app.route('/edit-users/<int:id>/', methods=['PUT'])
+def edit_user(id):
+    response = {}
+
+    if request.method == "PUT":
+        with sqlite3.connect('e-store.db') as conn:
+            firstname = request.json['firstname']
+            surname = request.json['surname']
+            email = request.json['email']
+            password = request.json['password']
+            put_data = {}
+            if firstname is not None:
+                put_data["firstname"] = firstname
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET firstname =? WHERE id =?", (put_data['firstname'], id))
+                conn.commit()
+                response['message'] = "Update was successful"
+                response["status_code"] = 201
+
+            if surname is not None:
+                put_data["surname"] = surname
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET surname =? WHERE id =?", (put_data['surname'], id))
+                conn.commit()
+                response['message'] = "Update was successful"
+                response["status_code"] = 201
+
+            if email is not None:
+                put_data["email"] = email
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET email =? WHERE id =?", (put_data['email'], id))
+                conn.commit()
+                response['message'] = "Update was successful"
+                response["status_code"] = 201
+
+            if password is not None:
+                put_data["password"] = password
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET password =? WHERE id =?", (put_data['password'], id))
+                conn.commit()
+                response['message'] = "Update was successful"
+                response["status_code"] = 201
+            return response
+
+
 # creates products
 @app.route('/products-create/', methods=['POST'])
 def products_create():
     response = {}
 
     if request.method == "POST":
-        product_name = request.form['product_name']
-        product_description = request.form['product_description']
-        product_quantity = request.form['product_quantity']
-        product_price = request.form['product_price']
+        product_name = request.json['product_name']
+        product_description = request.json['product_description']
+        product_quantity = request.json['product_quantity']
+        product_price = request.json['product_price']
         product_image = image_url()
 
         with sqlite3.connect('e-store.db') as conn:
@@ -217,17 +288,17 @@ def delete_product(id):
     return response
 
 # route to edit products
-@app.route('/edit-product/<int:id>', methods=['PUT'])
+@app.route('/edit-product/<int:id>/', methods=['PUT'])
 def edit_product(id):
     response = {}
 
     if request.method == "PUT":
         with sqlite3.connect('e-store.db') as conn:
-            product_name = request.form['product_name']
-            product_description = request.form['product_description']
-            product_quantity = request.form['product_quantity']
-            product_price = request.form['product_price']
-            product_image = image_url()
+            product_name = request.json['product_name']
+            product_description = request.json['product_description']
+            product_quantity = request.json['product_quantity']
+            product_price = request.json['product_price']
+            product_image = request.json['product_image']
             put_data = {}
 
             if product_name is not None:

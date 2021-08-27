@@ -94,7 +94,7 @@ def image_url():
 
     upload_result = None
     if request.method == 'POST' or request.method == 'PUT':
-        product_image = request.json['product_image']
+        product_image = request.files['product_image']
         app.logger.info('%s file_to_upload', product_image)
         if product_image:
             upload_result = cloudinary.uploader.upload(product_image)
@@ -231,10 +231,10 @@ def products_create():
     response = {}
 
     if request.method == "POST":
-        product_name = request.json['product_name']
-        product_description = request.json['product_description']
-        product_quantity = request.json['product_quantity']
-        product_price = request.json['product_price']
+        product_name = request.form['product_name']
+        product_description = request.form['product_description']
+        product_quantity = request.form['product_quantity']
+        product_price = request.form['product_price']
         product_image = image_url()
 
         with sqlite3.connect('e-store.db') as conn:
@@ -294,11 +294,11 @@ def edit_product(id):
 
     if request.method == "PUT":
         with sqlite3.connect('e-store.db') as conn:
-            product_name = request.json['product_name']
-            product_description = request.json['product_description']
-            product_quantity = request.json['product_quantity']
-            product_price = request.json['product_price']
-            product_image = request.json['product_image']
+            product_name = request.form['product_name']
+            product_description = request.form['product_description']
+            product_quantity = request.form['product_quantity']
+            product_price = request.form['product_price']
+            product_image = request.files['product_image']
             put_data = {}
 
             if product_name is not None:

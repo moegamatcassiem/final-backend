@@ -140,6 +140,32 @@ def user_registration():
         print("message sent!")
     return response
 
+# login route
+@app.route('/user-login/', methods=["PATCH"])
+def user_login():
+    response = {}
+
+    if request.method == 'PATCH':
+        email = request.json['email']
+        password = request.json['password']
+
+        with sqlite3.connect('e-store.db') as conn:
+            cursor = conn.cursor()
+            cursor.row_factory = sqlite3.Row
+            cursor.execute('SELECT * FROM users WHERE email=? and password=?', (email, password))
+            user = cursor.fetchall()
+            data = []
+
+            for a in user:
+                data.append({u: a[u] for u in a.keys()})
+
+            response['message'] = 'Account collected'
+            response['status_code'] = 200
+            response['data'] = data
+
+        return response
+
+
 
 # gets users
 @app.route('/get-users/', methods=['GET'])

@@ -129,10 +129,10 @@ def user_registration():
             response["message"] = 'Success'
             response["status_code"] = 201
 
-        msg = Message('Hello Message', sender='isaacscassiem2003@gmail.com', recipients=[email])
-        msg.body = "My email using Flask"
-        mail.send(msg)
-        print("message sent!")
+        # msg = Message('Hello Message', sender='isaacscassiem2003@gmail.com', recipients=[email])
+        # msg.body = "My email using Flask"
+        # mail.send(msg)
+        # print("message sent!")
     return response
 
 # login route

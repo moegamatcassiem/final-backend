@@ -115,9 +115,7 @@ mail = Mail(app)
 # user registrastion
 @app.route('/user-registration/', methods=["POST"])
 def user_registration():
-    response = {
-
-    }
+    response = {}
     if request.method == "POST":
         with sqlite3.connect("e-store.db") as conn:
             firstname = request.json['firstname']

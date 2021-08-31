@@ -104,9 +104,6 @@ def image_url():
 
 app = Flask(__name__)
 CORS(app)
-app.debug = True
-app.config['SECRET_KEY'] = 'super-secret'
-
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'isaacscassiem2003@gmail.com'
@@ -372,4 +369,4 @@ def edit_product(id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)

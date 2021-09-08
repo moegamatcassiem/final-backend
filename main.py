@@ -118,10 +118,10 @@ def user_registration():
     response = {}
     if request.method == "POST":
         with sqlite3.connect("e-store.db") as conn:
-            firstname = request.form['firstname']
-            surname = request.form['surname']
-            email = request.form['email']
-            password = request.form['password']
+            firstname = request.json['firstname']
+            surname = request.json['surname']
+            email = request.json['email']
+            password = request.json['password']
             cursor = conn.cursor()
             cursor.execute("INSERT INTO users (firstname, surname, email, password) VALUES(?, ?, ?, ?)",
                            (firstname, surname, email, password))
